@@ -13,7 +13,7 @@ import shutil
 #region
 
 # Directory folder of the csv files you want to process
-Input_path_CSVs = 'C:/FILES-S-DATA/'
+Input_path_CSVs = 'C:/FILES/OUTPUT_SORTED/Sewerage-Transfer-Monitoring-Plan/SPT/'
 
 # Can change to xlsx if needed, other changes will be nessesary to code
 Extension = 'csv'
@@ -22,7 +22,7 @@ Extension = 'csv'
 Delimiter = '|'
 
 # Output folder path of Report on Analysed files
-Output_path_XLSX = 'C:/OUTPUT/'
+Output_path_XLSX = 'C:/FILES/OUTPUT_SORTED/Sewerage-Transfer-Monitoring-Plan/'
 
 print('Directories loaded...')
 
@@ -36,15 +36,15 @@ print(filenames)
 
 bool_df_created = False
 for filename in filenames:
+    print(filename)
     if bool_df_created == False:
-        df_file = pd.read_csv(filename, sep=Delimiter, index_col=False, engine='python', dtype={'LOCATIONCODE': object, 'TEST_KEY_CODE': object})
+        df_file = pd.read_csv(filename, sep=Delimiter, dtype={'LOCATIONCODE': object, 'TEST_KEY_CODE': object})
         bool_df_created = True
         print('File Read')
     else:
-        df_temp = pd.read_csv(filename, sep=Delimiter, index_col=False, engine='python', dtype={'LOCATIONCODE': object, 'TEST_KEY_CODE': object})
-        df_file = df_file.append(df_temp)
+        df_temp = pd.read_csv(filename, sep=Delimiter, dtype={'LOCATIONCODE': object, 'TEST_KEY_CODE': object})
+        df_file = df_file.append(df_temp, sort=False)
         print('File Read')
-    print(df_file)
 
 
 print('_________________')
@@ -55,11 +55,12 @@ print('_________________')
 
 # CREATE EXCEL REPORT------------------------------------------------------------------------------------
 #region
+print(df_file.head(5))
 
 print('Creating Excel File')
 Report_path_filename = Output_path_XLSX + 'ALL-DATA.xlsx'
 writer = pd.ExcelWriter(Report_path_filename)
-df_file.to_excel(writer,'Sheet1')
+df_file.to_excel(writer,'Sheet1', index=False)
 writer.save()
 
 print('_________________')
